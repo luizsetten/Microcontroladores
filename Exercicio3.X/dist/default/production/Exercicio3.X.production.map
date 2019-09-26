@@ -1,0 +1,64 @@
+MPLINK 5.09, LINKER
+Linker Map File - Created Thu Sep 12 19:51:15 2019
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000002
+                   .cinit    romdata   0x000001    program   0x000004
+                   .org_1       code   0x000004    program   0x000094
+.config_2007_BUILD/DEFAULT/PRODUCTION/MAIN.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000002      
+                            0x000004    0x00004d      
+                            0x002007    0x002007      
+            78 out of 1094 program addresses used, program memory utilization is 7%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   ACENDE   0x00003b    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                     ALTO   0x000044    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                    APAGA   0x000038    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                 ATUALIZA   0x000033    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                    BAIXO   0x000049    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                 CHECA_BT   0x000022    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                      FIM   0x00000a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                   INICIO   0x000010    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                      LED   0x00003e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                     MAIN   0x00001e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                     SOMA   0x00002e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                  SUBTRAI   0x000028    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                    TIMER   0x000041    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                 TRATA_BT   0x000026    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+             _.org_1_0036   0x000036    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                      FIM   0x00000a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                   INICIO   0x000010    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                     MAIN   0x00001e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                 CHECA_BT   0x000022    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                 TRATA_BT   0x000026    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                  SUBTRAI   0x000028    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                     SOMA   0x00002e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                 ATUALIZA   0x000033    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+             _.org_1_0036   0x000036    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                    APAGA   0x000038    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                   ACENDE   0x00003b    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                      LED   0x00003e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                    TIMER   0x000041    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                     ALTO   0x000044    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+                    BAIXO   0x000049    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio3.X\Main.asm
+
+

@@ -1,0 +1,5 @@
+Warning[205] C:\USERS\LUIZG\DOCUMENTS\6∞PERÌODO\MICROCONTROLADORES\EXERCICIO1.X\MAIN.ASM 17 : Found directive in column 1. (__CONFIG)
+Message[302] C:\USERS\LUIZG\DOCUMENTS\6∞PERÌODO\MICROCONTROLADORES\EXERCICIO1.X\MAIN.ASM 94 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\LUIZG\DOCUMENTS\6∞PERÌODO\MICROCONTROLADORES\EXERCICIO1.X\MAIN.ASM 97 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\LUIZG\DOCUMENTS\6∞PERÌODO\MICROCONTROLADORES\EXERCICIO1.X\MAIN.ASM 100 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[203] C:\USERS\LUIZG\DOCUMENTS\6∞PERÌODO\MICROCONTROLADORES\EXERCICIO1.X\MAIN.ASM 165 : Found opcode in column 1. (BSF)

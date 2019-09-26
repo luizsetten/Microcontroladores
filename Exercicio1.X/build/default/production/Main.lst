@@ -1,0 +1,367 @@
+MPASM 5.84                          MAIN.ASM   9-12-2019  10:34:45         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;*******************************************************************************
+                      00002 ; *
+                      00003 ; Filename: EXERCICIO1.asm *
+                      00004 ; Date: Agosto-17 *
+                      00005 ; File Version: 1 *
+                      00006 ; Author: RONY MARK *
+                      00007 ; Company: IFSULDEMINAS *
+                      00008 ; Description: *
+                      00009  ;******************************************************************************* 
+                      00010 ;******************************************************************************* 
+                      00011 ; TODO INSERT INCLUDE CODE HERE 
+                      00012 #include "p16f84a.inc" 
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Mar 17 2019
+                      00005 ;  MPASM PIC16F84A processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2019 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      00209         LIST
+                      00013  
+                      00014 ; TODO INSERT CONFIG HERE
+                      00015 ; CONFIG 
+                      00016  
+Warning[205]: Found directive in column 1. (__CONFIG)
+2007   0002           00017 __CONFIG _FOSC_HS & _WDTE_OFF & _PWRTE_ON & _CP_ON 
+                      00018 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00019 ;* PAGINA??O DE MEM?RIA * 
+                      00020 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00021  ;DEFINI??O DE COMANDOS DE USU?RIO PARA ALTERA??O DA P?GINA DE MEM?RIA 
+                      00022  
+                      00023 #DEFINE BANK0 BCF STATUS,RP0
+                      00024 #DEFINE BANK1 BSF STATUS,RP0 
+                      00025  
+                      00026 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00027 ;* VARI?VEIS * 
+                      00028 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00029 ; DEFINI??O DOS NOMES E ENDERE?OS DE TODAS AS VARI?VEIS UTILIZADAS
+                      00030 ; PELO SISTEMA 
+                      00031  
+                      00032     CBLOCK 0x20 
+                      00033     
+  00000020            00034         CONTADOR    ;ARMAZENA O VALOR DA CONTAGEM 
+  00000021            00035         UP_DOWN     ;ARMAZENA OS FLAGS DE CONTROLE
+  00000022            00036         FILTRO      ;FILTRAGEM PARA O BOT?O 
+                      00037         
+                      00038     ENDC            ;FIM DO BLOCO DE MEM?RIA 
+                      00039     
+                      00040 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00041 ;* FLAGS INTERNOS * 
+                      00042 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+MPASM 5.84                          MAIN.ASM   9-12-2019  10:34:45         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00043 ; DEFINI??O DE TODOS OS FLAGS UTILIZADOS PELO SISTEMA 
+                      00044     
+                      00045 #DEFINE CONTROLE    UP_DOWN,0 
+                      00046     
+                      00047 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00048  ;* CONSTANTES *
+                      00049  ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00050  ; DEFINI??O DE TODAS AS CONSTANTES UTILIZADAS PELO SISTEMA 
+                      00051  
+  00000001            00052 MIN         EQU     .1 
+  00000009            00053 MAX         EQU     .9 
+  000000E6            00054 T_FILTRO    EQU     .230 
+                      00055     
+                      00056 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00057 ;* ENTRADAS * 
+                      00058 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00059  ; DEFINI??O DE TODOS OS PINOS QUE SER?O UTILIZADOS COMO ENTRADA
+                      00060  ; RECOMENDAMOS TAMB?M COMENTAR O SIGNIFICADO DE SEUS ESTADOS (0 E 1) 
+                      00061  
+                      00062 #DEFINE BOTAO PORTA,2 ; 0 -> PRESSIONADO 
+                      00063                       ; 1 -> LIBERADO 
+                      00064                       
+                      00065 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00066 ;* SA?DAS * 
+                      00067 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00068 ; DEFINI??O DE TODOS OS PINOS QUE SER?O UTILIZADOS COMO SA?DA
+                      00069  ; RECOMENDAMOS TAMB?M COMENTAR O SIGNIFICADO DE SEUS ESTADOS (0 E 1) 
+                      00070 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00071 ;* VETOR DE RESET *
+                      00072  ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00073  
+                      00074     ORG 0x00    ;ENDERE?O INICIAL DE PROCESSAMENTO 
+0000   2???           00075     GOTO INICIO 
+                      00076     
+                      00077 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00078  ;* IN?CIO DA INTERRUP??O *
+                      00079  ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00080  ; AS INTERRUP??ES N?O SER?O UTILIZADAS, POR ISSO PODEMOS SUBSTITUIR
+                      00081  ; TODO O SISTEMA EXISTENTE NO ARQUIVO MODELO PELO APRESENTADO ABAIXO 
+                      00082 ; ESTE SISTEMA N?O ? OBRIGAT?RIO, MAS PODE EVITAR PROBLEMAS FUTUROS 
+                      00083  
+                      00084     ORG 0x04    ;ENDERE?O INICIAL DA INTERRUP??O 
+0004   0009           00085     RETFIE      ;RETORNA DA INTERRUP??O 
+                      00086     
+                      00087 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00088 ;* INICIO DO PROGRAMA *
+                      00089  ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00090  
+0005                  00091 INICIO 
+0005   1683           00092     BANK1
+0006   3004           00093     MOVLW B'00000100'
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0007   0085           00094     MOVWF TRISA          ;CONFIGURA AS PORTAS RA0,RA1,RA3 E RA4 COM ENTRADA E RA2 COMO SA?DA
+MPASM 5.84                          MAIN.ASM   9-12-2019  10:34:45         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00095 
+0008   3000           00096     MOVLW B'00000000'
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0009   0086           00097     MOVWF TRISB         ;CONFIGURA AS PORTAS RB0 AT? RB7 COMO SA?DA
+                      00098 
+000A   3080           00099     MOVLW B'10000000'
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000B   0081           00100     MOVWF OPTION_REG    ;DESABILITA OS PULL-UPS DO PORTB
+                      00101 
+000C   3000           00102     MOVLW B'00000000' 
+000D   008B           00103     MOVWF INTCON        ;TODAS AS INTERRUP??ES DESLIGADAS 
+000E   1283           00104     BANK0 
+                      00105     
+                      00106 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00107 ;* INICIALIZA??O DAS VARI?VEIS *
+                      00108  ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00109  
+000F   0185           00110     CLRF PORTA ;LIMPA O PORTA
+                      00111     
+0010   0186           00112     CLRF PORTB ;LIMPA O PORTB
+0011   3001           00113     MOVLW MIN
+0012   00A0           00114     MOVWF CONTADOR ;MOVE O VALOR DO ACUMULADOR (MIN = 1) PARA CONTADOR
+                      00115 
+                      00116  ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00117  ;* ROTINA PRINCIPAL *
+                      00118  ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00119  
+0013                  00120 MAIN 
+0013   0820           00121     MOVF CONTADOR,W ;MOVE O VALOR DO CONTADOR PARA O ACUMULADOR
+                      00122     
+0014   0086           00123     MOVWF PORTB ;MOVE O VALOR DO ACUMULADOR PARA PORTB
+                      00124     
+0015   30E6           00125     MOVLW T_FILTRO 
+                      00126     
+0016   00A2           00127     MOVWF FILTRO ;MOVE O VALOR DO ACUMULADOR PARA FILTRO
+                      00128     
+0017                  00129 CHECA_BT 
+0017   1905           00130     BTFSC BOTAO ;VERIFICA SE O BOT?O EST? LIMPO, SE ESTIVER PULA A PR?XIMA INSTRU??O 
+                      00131 
+0018   2???           00132     GOTO MAIN ;VAI PARA MAIN
+                      00133     
+0019   0BA2           00134     DECFSZ FILTRO,F ;DECREMENTA FILTRO, PULA SE F FOR IGUAL A 0 
+                      00135     
+001A   2???           00136     GOTO CHECA_BT ;VAI PARA CHECA_BT
+                      00137     
+001B                  00138 TRATA_BT 
+001B   1C21           00139     BTFSS CONTROLE ;SE CONTROLE FOR 0 EXECUTA A PROXIMA INSTRU??O, SE N?O, PULA A PR?XIMA INSTRU??O
+                      00140     
+001C   2???           00141     GOTO SOMA ;VAI PARA SOMA
+                      00142     
+001D                  00143 SUBTRAI 
+001D   03A0           00144     DECF CONTADOR,F ;DECREMENTA CONTADOR, SE F FOR 0 O RESULTADO SER? ARMAZENADO NO ACUMULADOR, SEN?O O 
+                            RESULTADO SERA ARMAZENADO DE VOLTA NO CONTADOR
+MPASM 5.84                          MAIN.ASM   9-12-2019  10:34:45         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00145     
+001E   3001           00146     MOVLW MIN ;MOVE O VALOR DE MIN PARA O ACUMULADOR
+                      00147     
+001F   0220           00148     SUBWF CONTADOR,W ;SUBTRAI O VALOR DO ACUMULADOR DO CONTADOR, SE W(ACUMULADOR) FOR 0 O RESUTADO SER? 
+                            ARMAZENADO NO ACUMULADOR, SEN?O O RESULTADO SER? ARMAZENADO DE VOLTA NO CONTADOR
+                      00149     
+0020   1903           00150     BTFSC STATUS,Z ;SE O BIT Z NO REGISTRADOR STATUS FOR 1, A PROXIMA INSTRU??O ? EXECUTADA, SEN?O ? PUL
+                            ADA
+                      00151     
+0021   1021           00152     BCF CONTROLE ;LIMPA O BIT CONTROLA
+                      00153     
+0022   2???           00154     GOTO ATUALIZA ;VAI PARA ATUALIZA
+                      00155 
+0023                  00156 SOMA 
+0023   0AA0           00157     INCF CONTADOR,F ;INCREMENTA CONTADOR, SE F ? 0 O RESULTADO ? COLOCADO NO ACUMULADOR, SEN?O ? COLOCAD
+                            O NO CONTADOR
+                      00158     
+0024   3009           00159     MOVLW MAX ;MOVE O VALOR DE MAX PARA O ACUMULADOR
+                      00160     
+0025   0220           00161     SUBWF CONTADOR,W ;DECREMENTA CONTADOR, SE F ? 0 O RESULTADO ? COLOCADO NO ACUMULADOR, SEN?O ? COLOCA
+                            DO NO CONTADOR
+                      00162     
+0026   1903           00163     BTFSC STATUS,Z ;SE O BIT Z NO REGISTRADOR STATUS FOR 1, A PROXIMA INSTRU??O ? EXECUTADA, SEN?O ? PUL
+                            ADA
+                      00164     
+Warning[203]: Found opcode in column 1. (BSF)
+0027   1421           00165 BSF CONTROLE ;SETA O BIT DE CONTROLE
+                      00166     
+0028                  00167 ATUALIZA 
+0028   0820           00168     MOVF CONTADOR,W ;MOVE O VALOR DE CONTADOR PARA W(ACUMULADOR)
+                      00169     
+0029   0086           00170     MOVWF PORTB ;MOVE O VALOR DO PORTB PARA O ACUMULADOR
+                      00171     
+002A   1D05           00172     BTFSS BOTAO ;SE BOT?O FOR 1 A PR?XIMA INSTRU??O ? PULADA, SEN?O N?O
+                      00173     
+002B   2???           00174     GOTO $-1 ;VAI PARA A INSTRU??O ANTERIOR
+                      00175     
+002C   2???           00176     GOTO MAIN ;VAI PARA MAIN
+                      00177     
+                      00178 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00179 ;* FIM DO PROGRAMA * 
+                      00180 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00181     
+0002                  00182     END ;OBRIGAT?RIO 
+MPASM 5.84                          MAIN.ASM   9-12-2019  10:34:45         PAGE  5
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ATUALIZA                          00000028
+BANK0                             BCF STATUS,RP0
+BANK1                             BSF STATUS,RP0
+BOTAO                             PORTA,2
+C                                 00000000
+CHECA_BT                          00000017
+CONTADOR                          00000020
+CONTROLE                          UP_DOWN,0
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FILTRO                            00000022
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000005
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+MAIN                              00000013
+MAX                               00000009
+MIN                               00000001
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+MPASM 5.84                          MAIN.ASM   9-12-2019  10:34:45         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+SOMA                              00000023
+STATUS                            00000003
+SUBTRAI                           0000001D
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TRATA_BT                          0000001B
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+T_FILTRO                          000000E6
+UP_DOWN                           00000021
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_.org_1_002B                      0000002B
+_CONFIG                           00002007
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_DEVID1                           00002006
+_FOSC_EXTRC                       00003FFF
+_FOSC_HS                          00003FFE
+_FOSC_LP                          00003FFC
+_FOSC_XT                          00003FFD
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+MPASM 5.84                          MAIN.ASM   9-12-2019  10:34:45         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+
+Errors   :     0
+Warnings :     2 reported,     0 suppressed
+Messages :     3 reported,     0 suppressed
+
+

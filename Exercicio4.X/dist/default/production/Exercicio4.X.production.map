@@ -1,0 +1,114 @@
+MPLINK 5.09, LINKER
+Linker Map File - Created Mon Sep 23 14:02:46 2019
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000002
+                   .cinit    romdata   0x000001    program   0x000004
+                   .org_1       code   0x000004    program   0x0001f0
+.config_2007_BUILD/DEFAULT/PRODUCTION/MAIN.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000002      
+                            0x000004    0x0000fb      
+                            0x002007    0x002007      
+            252 out of 1094 program addresses used, program memory utilization is 23%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   ACENDE   0x000047    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO1   0x000052    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO2   0x000064    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO3   0x000075    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO4   0x00008c    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO5   0x0000a4    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO6   0x0000b8    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO7   0x0000c9    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO8   0x0000db    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO9   0x0000f1    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    APAGA   0x000044    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                 ATUALIZA   0x00003f    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO1   0x000057    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO2   0x000069    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO3   0x00007d    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO4   0x000095    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO5   0x0000aa    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO6   0x0000bd    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO7   0x0000cf    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO8   0x0000e3    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO9   0x0000f7    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                 CHECA_BT   0x00002e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                      FIM   0x000016    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ1   0x00004d    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ2   0x00005c    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ3   0x00006e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ4   0x000085    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ5   0x00009d    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ6   0x0000b1    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ7   0x0000c2    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ8   0x0000d4    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ9   0x0000ea    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   INICIO   0x00001c    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                      LED   0x00004a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                     MAIN   0x00002a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                     SOMA   0x00003a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                  SUBTRAI   0x000034    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+               TMR0_INTER   0x00000a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                 TRATA_BT   0x000032    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+             _.org_1_0042   0x000042    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+               TMR0_INTER   0x00000a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                      FIM   0x000016    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   INICIO   0x00001c    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                     MAIN   0x00002a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                 CHECA_BT   0x00002e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                 TRATA_BT   0x000032    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                  SUBTRAI   0x000034    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                     SOMA   0x00003a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                 ATUALIZA   0x00003f    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+             _.org_1_0042   0x000042    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    APAGA   0x000044    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   ACENDE   0x000047    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                      LED   0x00004a    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ1   0x00004d    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO1   0x000052    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO1   0x000057    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ2   0x00005c    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO2   0x000064    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO2   0x000069    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ3   0x00006e    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO3   0x000075    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO3   0x00007d    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ4   0x000085    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO4   0x00008c    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO4   0x000095    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ5   0x00009d    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO5   0x0000a4    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO5   0x0000aa    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ6   0x0000b1    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO6   0x0000b8    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO6   0x0000bd    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ7   0x0000c2    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO7   0x0000c9    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO7   0x0000cf    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ8   0x0000d4    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO8   0x0000db    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO8   0x0000e3    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    FREQ9   0x0000ea    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                    ALTO9   0x0000f1    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+                   BAIXO9   0x0000f7    program     static C:\Users\luizg\Documents\6°Período\Microcontroladores\Exercicio4.X\Main.asm
+
+

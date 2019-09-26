@@ -1,0 +1,528 @@
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;TODO INSERT INCLUDE CODE HERE 
+                      00002                       
+                      00003 #include "p16f84a.inc" 
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Mar 17 2019
+                      00005 ;  MPASM PIC16F84A processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2019 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      00209         LIST
+                      00004                       
+                      00005 ;TODO INSERT CONFIG HERE
+                      00006 ;CONFIG
+                      00007                       
+Warning[205]: Found directive in column 1. (__CONFIG)
+2007   0002           00008 __CONFIG _FOSC_HS & _WDTE_OFF & _PWRTE_ON & _CP_ON
+                      00009                       
+                      00010 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00011 ;* PAGINA??O DE MEM?RIA * 
+                      00012 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00013     
+                      00014 ;Defini??o de comandos do usu?rio para altera??o da p?gina de mem?ria
+                      00015 
+                      00016 #DEFINE BANK0 BCF STATUS,RP0
+                      00017 #DEFINE BANK1 BSF STATUS,RP0 
+                      00018  
+                      00019 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00020 ;* VARI?VEIS * 
+                      00021 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00022  
+                      00023 ;Defini??o dos nomes e endere?os de todas as v?riaveis utilizadas 
+                      00024 ;pelo sistema 
+                      00025  
+Warning[205]: Found directive in column 1. (CBLOCK)
+                      00026 CBLOCK 0x20 
+                      00027                       
+  00000020            00028 STATUS_TEMP ;V?riavel utilizada para salvar o contexto do STATUS
+  00000021            00029 W_TEMP ;V?riavel utilizada para salvar o contexto do ACUMULADOR(W)
+  00000022            00030 CONTADOR ;Armazena o valor da contagem
+  00000023            00031 UP_DOWN ;Armazena os flags de controle
+  00000024            00032 FILTRO ;Filtragem para o bot?o
+  00000025            00033 TEMP1
+  00000026            00034 F_FIM
+  00000027            00035 TEMPO
+Warning[205]: Found directive in column 1. (ENDC)
+                      00036 ENDC ;Fim do bloco de mem?ria
+                      00037  
+                      00038 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00039 ;* FLAGS INTERNOS * 
+                      00040 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00041  
+                      00042 ;Defini??o de todos os flags utilizados pelo sistema 
+                      00043 
+                      00044 #DEFINE CONTROLE UP_DOWN,0
+                      00045  
+                      00046 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00047 ;* CONSTANTES *
+                      00048 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00049  
+                      00050 ;Defini??o de todas as constantes utilizadas no sistema
+                      00051  
+  00000001            00052 MIN EQU .1 
+  00000009            00053 MAX EQU .9 
+  000000E6            00054 T_FILTRO EQU .230 
+                      00055 
+                      00056 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00057 ;* ENTRADAS * 
+                      00058 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00059  
+                      00060 ;Defini??o de todos os pinos que ser?o utilizados como entradas
+                      00061 ;Recomendamos tamb?m comentar o significado de seus estado (0 e 1)
+                      00062  
+                      00063 #DEFINE BOTAO PORTB,2 ;0 -> PRESSIONADO 
+                      00064                       ;1 -> LIBERADO 
+                      00065                       
+                      00066 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00067 ;* SA?DAS * 
+                      00068 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00069                       
+                      00070 ;Defini??o de todos os pinos que ser? utilizados com sa?das
+                      00071 ;Recomendamos tamb?m comentar o significado de seus estados (0 e 1)
+                      00072                       
+                      00073 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00074 ;* VETOR DE RESET *
+                      00075 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00076  
+Warning[205]: Found directive in column 1. (ORG)
+                      00077 ORG 0x00 ;Endere?o inicial de processamente GOTO INICIO
+Warning[203]: Found opcode in column 1. (GOTO)
+0000   2???           00078 GOTO INICIO
+                      00079 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00080 ;* IN?CIO DA INTERRUP??O *
+                      00081 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00082                       
+                      00083 ;As interrup??es n?o seram utilizadas, por isso podemos substituir
+                      00084 ;Todo o sistema existente no arquivo modelo pelo apresentado abaixo
+                      00085 ;Este sistema n?o ? obrigat?rio, mas pode evitar problemas futuros
+                      00086                       
+Warning[205]: Found directive in column 1. (ORG)
+                      00087 ORG 0x04 ;Endere?o inicial da interrup??o
+                      00088    
+Warning[203]: Found opcode in column 1. (MOVWF)
+0004   00A1           00089 MOVWF W_TEMP        ;Move o estado atual do acumulador para o W_TEMP
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (SWAPF)
+0005   0E03           00090 SWAPF STATUS, W     ;Move o estado atual do STATUS para o acumulador, com a sequ?ncia de BITS invertida
+                      00091 ;Necessida de usar o SWAPF, pois o MOVFW altera o estado do STATUS      
+Warning[203]: Found opcode in column 1. (MOVWF)
+0006   00A0           00092 MOVWF STATUS_TEMP   ;Move do acumulador para o STATUS_TEMP
+                      00093 
+                      00094                     
+                      00095 
+Warning[203]: Found opcode in column 1. (BTFSS)
+0007   1C8B           00096 BTFSS INTCON,INTF
+Warning[203]: Found opcode in column 1. (GOTO)
+0008   2???           00097 GOTO TIMER
+Warning[203]: Found opcode in column 1. (GOTO)
+0009   2???           00098 GOTO LED     
+                      00099               
+                      00100                       
+000A                  00101 FIM           
+Warning[203]: Found opcode in column 1. (SWAPF)
+000A   0E20           00102 SWAPF STATUS_TEMP, W ;Move o estado de STATUS_TEMP para o acumulador, desinvertendo o seu estado
+Warning[203]: Found opcode in column 1. (MOVWF)
+000B   0083           00103 MOVWF STATUS         ;Move do acumulador para o STATUS
+Warning[203]: Found opcode in column 1. (SWAPF)
+000C   0EA1           00104 SWAPF W_TEMP, F      ;Inverte o estado de W_TEMP e armazena no pr?pio
+Warning[203]: Found opcode in column 1. (SWAPF)
+000D   0E21           00105 SWAPF W_TEMP, W      ;Move o estado de W_TEMP para o acumulador
+                      00106 
+                      00107 ;Aparti daqui tanto o STATUS como o acumulador retornaram ao estado que estavem antes de entrarem na int
+                            errup??o
+                      00108 
+Warning[203]: Found opcode in column 1. (BCF)
+000E   108B           00109 BCF INTCON, 1   ;Limpa o bit no INTCON que sinaliza que ocorreu a interrup??o no RBO/INT
+Warning[203]: Found opcode in column 1. (RETFIE)
+000F   0009           00110 RETFIE          ;Retorna da interrup??o
+                      00111             
+                      00112                       
+                      00113 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00114 ;* INICIO DO PROGRAMA *
+                      00115 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00116  
+0010                  00117 INICIO
+                      00118 
+                      00119  
+Warning[203]: Found opcode in column 1. (BSF)
+0010   1683           00120 BANK1
+Warning[203]: Found opcode in column 1. (MOVLW)
+0011   3000           00121 MOVLW B'00000000' ;Move o n?mero bin?rio 00000000 para o acumulador
+Warning[203]: Found opcode in column 1. (MOVWF)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0012   0085           00122 MOVWF TRISA       ;Move o estado do acumulador para o Registrador TRISA, habilitando o PORTA com sa?da
+                      00123 
+Warning[203]: Found opcode in column 1. (MOVLW)
+0013   3005           00124 MOVLW B'00000101' ;Move o n?mero bin?rio 00000000 para o acumulador
+Warning[203]: Found opcode in column 1. (MOVWF)
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0014   0086           00125 MOVWF TRISB       ;Move o n?mero bin?rio 00000000 do acumulador para o registrador TRISB, habilitando as
+                            sim RB0 e RB2 como entrada
+                      00126                   ;e todas as outras com sa?das
+                      00127             
+Warning[203]: Found opcode in column 1. (MOVLW)
+0015   30C2           00128 MOVLW B'11000010';Move o n?mero bin?rio 11000000 para o acumulador
+Warning[203]: Found opcode in column 1. (MOVWF)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0016   0081           00129 MOVWF OPTION_REG ;Move o estado de acumulador para o registrador OPTION_REG, desabilitando PORTB PULL-UP
+                            S
+                      00130                  ;e ativando a interrup??o no RBO/INT por borda de subida
+                      00131 
+Warning[203]: Found opcode in column 1. (MOVLW)
+0017   30F0           00132 MOVLW B'11110000' ;Move o n?mero bin?rio 10010000 para o acumulador 
+Warning[203]: Found opcode in column 1. (MOVWF)
+0018   008B           00133 MOVWF INTCON      ;Move o estado do ACUMULADOR para o INTCON, habilitando a interrup??o no RB0/INT
+                      00134 
+Warning[203]: Found opcode in column 1. (BCF)
+0019   1283           00135 BANK0
+                      00136 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00137 ;* INICIALIZA??O DAS VARI?VEIS *
+                      00138 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00139 
+Warning[203]: Found opcode in column 1. (CLRF)
+001A   0185           00140 CLRF PORTA ;Limpa as sa?das do PORTA
+Warning[203]: Found opcode in column 1. (CLRF)
+001B   0186           00141 CLRF PORTB ;Limpa as sa?das do PORTB
+                      00142  
+Warning[203]: Found opcode in column 1. (MOVLW)
+001C   3001           00143 MOVLW MIN      ;Move o valor de MIN para o acumulador
+Warning[203]: Found opcode in column 1. (MOVWF)
+001D   00A2           00144 MOVWF CONTADOR ;Move o valor de MIN no acumulador para o CONTADOR
+                      00145  
+                      00146 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      00147 ;* ROTINA PRINCIPAL *
+                      00148 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00149 
+001E                  00150 MAIN 
+Warning[203]: Found opcode in column 1. (MOVF)
+001E   0822           00151 MOVF CONTADOR,W ;Move o valor de CONTADOR para o acumulador
+Warning[203]: Found opcode in column 1. (MOVWF)
+001F   0085           00152 MOVWF PORTA     ;Move o valor de CONTADOR no acumulador para as SA?DAS do PORTB
+                      00153  
+Warning[203]: Found opcode in column 1. (MOVLW)
+0020   30E6           00154 MOVLW T_FILTRO ;Move o valor de T_FILTRO para o acumulador
+Warning[203]: Found opcode in column 1. (MOVWF)
+0021   00A4           00155 MOVWF FILTRO   ;Move o valor de T_FILTRO no acumulador para FILTRO
+                      00156 
+                      00157  
+0022                  00158 CHECA_BT 
+Warning[203]: Found opcode in column 1. (BTFSC)
+0022   1906           00159 BTFSC BOTAO ;Confere se o bot?o est? pressionado, se n?o, pula a prox?ma instru??o
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (GOTO)
+0023   2???           00160 GOTO MAIN   ;Pula para o MAIN
+                      00161  
+Warning[203]: Found opcode in column 1. (DECFSZ)
+0024   0BA4           00162 DECFSZ FILTRO,F ;Decrementa FILTRO e armazena o resultado no pr?prio FILTRO, at? encontrar 0 e ent?o pul
+                            ar a pr?xima instru??o
+Warning[203]: Found opcode in column 1. (GOTO)
+0025   2???           00163 GOTO CHECA_BT   ;Pula para CHECA_BT
+                      00164  
+                      00165  
+0026                  00166 TRATA_BT 
+Warning[203]: Found opcode in column 1. (BTFSS)
+0026   1C23           00167 BTFSS CONTROLE ;Confere se CONTROLE est? em 1, se sim, pula a pr?xima instru??o
+Warning[203]: Found opcode in column 1. (GOTO)
+0027   2???           00168 GOTO SOMA      ;Pula para SOMA
+                      00169  
+                      00170                       
+0028                  00171 SUBTRAI 
+Warning[203]: Found opcode in column 1. (DECF)
+0028   03A2           00172 DECF CONTADOR,F ;Decrementa o contador
+                      00173  
+Warning[203]: Found opcode in column 1. (MOVLW)
+0029   3001           00174 MOVLW MIN        ;Move o que est? no min para o acumulador
+Warning[203]: Found opcode in column 1. (SUBWF)
+002A   0222           00175 SUBWF CONTADOR,W ;subtrai o que esta no acumulador do contador
+                      00176  
+Warning[203]: Found opcode in column 1. (BTFSC)
+002B   1903           00177 BTFSC STATUS,Z ;confere se o STATUS esta em 0, se sim, pula a pr?xima instru??o
+Warning[203]: Found opcode in column 1. (BCF)
+002C   1023           00178 BCF CONTROLE   ;Limpa o bit de controle
+Warning[203]: Found opcode in column 1. (GOTO)
+002D   2???           00179 GOTO ATUALIZA  ;Pula para o ATUALIZA
+                      00180 
+                      00181     
+002E                  00182 SOMA 
+Warning[203]: Found opcode in column 1. (INCF)
+002E   0AA2           00183 INCF CONTADOR,F ;Incrementa o contador em +1
+Warning[203]: Found opcode in column 1. (MOVLW)
+002F   3009           00184 MOVLW MAX       ;Move o que est? em MAX para o acumulador
+Warning[203]: Found opcode in column 1. (SUBWF)
+0030   0222           00185 SUBWF CONTADOR,W;Subtrai o que est? no acumulador do contador
+Warning[203]: Found opcode in column 1. (BTFSC)
+0031   1903           00186 BTFSC STATUS,Z  ;Confere se o STATUS est? em 0, se sim, pula a pr?xima instru??o
+Warning[203]: Found opcode in column 1. (BSF)
+0032   1423           00187 BSF CONTROLE    ;Seta n?vel l?gico alto no bit de controle
+                      00188  
+                      00189  
+0033                  00190 ATUALIZA 
+Warning[203]: Found opcode in column 1. (MOVF)
+0033   0822           00191 MOVF CONTADOR,W ;MOve o que est? no CONTADOR para o ACUMULADOR
+Warning[203]: Found opcode in column 1. (MOVWF)
+0034   0085           00192 MOVWF PORTA     ;Move o que est? no ACUMULADOR para o PORTA
+Warning[203]: Found opcode in column 1. (BTFSS)
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0035   1D06           00193 BTFSS BOTAO     ;Confere se o BOTAO est? em 1, se sim, pula a pr?xima instru??o
+Warning[203]: Found opcode in column 1. (GOTO)
+0036   2???           00194 GOTO $-1        ;Volta para a instru??o anterior
+Warning[203]: Found opcode in column 1. (GOTO)
+0037   2???           00195 GOTO MAIN       ;Pula para MAIN
+                      00196 
+0038                  00197 APAGA
+Warning[203]: Found opcode in column 1. (BCF)
+0038   1386           00198 BCF PORTB,7     ;Seta RB7 com n?vel l?gico baixo
+Warning[203]: Found opcode in column 1. (BCF)
+0039   108B           00199 BCF INTCON,INTF          
+Warning[203]: Found opcode in column 1. (GOTO)
+003A   2???           00200 GOTO FIM
+                      00201  
+003B                  00202 ACENDE
+Warning[203]: Found opcode in column 1. (BSF)
+003B   1786           00203 BSF PORTB,7     ;Seta RB7 com n?vel l?gico alto
+Warning[203]: Found opcode in column 1. (BCF)
+003C   108B           00204 BCF INTCON,INTF
+Warning[203]: Found opcode in column 1. (GOTO)
+003D   2???           00205 GOTO FIM
+                      00206  
+                      00207         
+003E                  00208 LED
+Warning[203]: Found opcode in column 1. (BTFSS)
+003E   1F86           00209 BTFSS PORTB,7 ;Verifica o n?vel l?gico do RB7. Caso 1, apaga, caso 0, acende
+Warning[203]: Found opcode in column 1. (GOTO)
+003F   2???           00210 GOTO ACENDE   ;Jump para onde ser? setado n?vel l?gico alto no RB7
+Warning[203]: Found opcode in column 1. (GOTO)
+0040   2???           00211 GOTO APAGA    ;Jump para onde ser? setado n?vel l?gico baixo no RB7     
+                      00212                  
+0041                  00213 TIMER
+Warning[203]: Found opcode in column 1. (BTFSS)
+0041   1F06           00214 BTFSS PORTB,6
+Warning[203]: Found opcode in column 1. (GOTO)
+0042   2???           00215 GOTO ALTO
+Warning[203]: Found opcode in column 1. (GOTO)
+0043   2???           00216 GOTO BAIXO
+                      00217                  
+0044                  00218 ALTO
+Warning[203]: Found opcode in column 1. (BSF)
+0044   1706           00219 BSF PORTB,6
+Warning[203]: Found opcode in column 1. (BCF)
+0045   110B           00220 BCF INTCON,T0IF
+Warning[203]: Found opcode in column 1. (MOVLW)
+0046   3085           00221 MOVLW .256-.123
+Warning[203]: Found opcode in column 1. (MOVWF)
+0047   0081           00222 MOVWF TMR0
+Warning[203]: Found opcode in column 1. (GOTO)
+0048   2???           00223 GOTO FIM
+                      00224                  
+0049                  00225 BAIXO
+Warning[203]: Found opcode in column 1. (BCF)
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0049   1306           00226 BCF PORTB,6
+Warning[203]: Found opcode in column 1. (BCF)
+004A   110B           00227 BCF INTCON,T0IF
+Warning[203]: Found opcode in column 1. (MOVLW)
+004B   3085           00228 MOVLW .256-.123
+Warning[203]: Found opcode in column 1. (MOVWF)
+004C   0081           00229 MOVWF TMR0
+Warning[203]: Found opcode in column 1. (GOTO)
+004D   2???           00230 GOTO FIM
+                      00231                  
+                      00232 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00233 ;* FIM DO PROGRAMA * 
+                      00234 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                      00235  
+Warning[205]: Found directive in column 1. (END)
+0002                  00236 END ;OBRIGAT?RIO 
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ACENDE                            0000003B
+ALTO                              00000044
+APAGA                             00000038
+ATUALIZA                          00000033
+BAIXO                             00000049
+BANK0                             BCF STATUS,RP0
+BANK1                             BSF STATUS,RP0
+BOTAO                             PORTB,2
+C                                 00000000
+CHECA_BT                          00000022
+CONTADOR                          00000022
+CONTROLE                          UP_DOWN,0
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FILTRO                            00000024
+FIM                               0000000A
+FSR                               00000004
+F_FIM                             00000026
+GIE                               00000007
+INDF                              00000000
+INICIO                            00000010
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+LED                               0000003E
+MAIN                              0000001E
+MAX                               00000009
+MIN                               00000001
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+SOMA                              0000002E
+STATUS                            00000003
+STATUS_TEMP                       00000020
+SUBTRAI                           00000028
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TEMP1                             00000025
+TEMPO                             00000027
+TIMER                             00000041
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TRATA_BT                          00000026
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+T_FILTRO                          000000E6
+UP_DOWN                           00000023
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+W_TEMP                            00000021
+Z                                 00000002
+_.org_1_0036                      00000036
+_CONFIG                           00002007
+MPASM 5.84                          MAIN.ASM   9-12-2019  19:51:14         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_DEVID1                           00002006
+_FOSC_EXTRC                       00003FFF
+_FOSC_HS                          00003FFE
+_FOSC_LP                          00003FFC
+_FOSC_XT                          00003FFD
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+
+Errors   :     0
+Warnings :    81 reported,     0 suppressed
+Messages :     3 reported,     0 suppressed
+
+
